@@ -1,8 +1,16 @@
 var loader= require ('tool.loader');
+var spawner= require ('tool.spawner');
+var harverster= require ('role.harvester');
+
+//loader.run();
 
 
 module.exports.loop = function () {
-	loader.run();
-	console.log('testgit2')
+
+	spawner.run();
+
+	harverster.run();
+
+
 
 }

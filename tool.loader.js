@@ -8,7 +8,7 @@ var toolloader = {
 					var sou=Game.spawns[ksp].room.find(FIND_SOURCES)
 					for (var kso in sou) {
 						//console.log(JSON.stringify(sou[kso]))
-						Memory.mysources[kso]={'pos':sou[kso].pos, 'id':sou[kso].id}
+						Memory.mysources[kso]={'pos':sou[kso].pos, 'range':1}
 					}
 			}
 			console.log(JSON.stringify(Memory.mysources))
