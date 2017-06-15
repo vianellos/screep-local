@@ -6,73 +6,131 @@ var roleharvester = {
 		}
     },
 	harvest: function(cr) {
-		console.log(cr.memory.action)
 
 		switch(cr.memory.action) {
 			case "sp":
 				if (cr.spawning!=true) {
-					if (this.findResource(cr)) {
-						cr.memory.action='mo'
-					}
-					else {
-						cr.memory.action='idl'
-					}
+					this.findResource(cr)
 				}
 			break;
 			case 'idl':
-				console.log(cr.name + " is idle.")
-				if (this.findResource(cr)) {
-					cr.memory.action='mo'
+				if (cr.carry.energy<cr.carryCapacity) {
+					this.findResource(cr)
+				}
+				else {
+					this.findSpawn(cr)
 				}
 			break;
-			case 'mo':
-				this.moveToRes(cr)
+			case 'ha':
+				this.harvestRes(cr)
+			break;
+			case 'fs':
+				this.findSpawn(cr)
+			break;
+			case 'cb':
+				this.comeBack(cr)
 			break;
 		}
 	},
 	findResource: function(cr) {
-		let goals = _.map(cr.room.find(FIND_SOURCES), function(source) {
-		    // We can't actually walk on sources-- set `range` to 1
-		    // so we path next to it.
-		    return { pos: source.pos, range: 1 };
-		});
-		//console.log(JSON.stringify(cr.pos))
-	 	var fpath=PathFinder.search(cr.pos, goals)
-		//path.path.unshift(cr.pos)
-		console.log(JSON.stringify(fpath.path))
+		console.log(cr.name+ " is looking for a resource")
+		var res=cr.pos.findClosestByPath(FIND_SOURCES)
+		cr.memory.action='idl'
+		if (res) {
+			//console.log(JSON.stringify(res))
+			var path=cr.pos.findPathTo(res)
+			if (path) {
+				cr.memory.pathToRes=Room.serializePath(path)
+				cr.memory.resId=res.id
+				console.log(cr.name+ " found resource "+res.id)
+				cr.memory.action='ha'
+				return true
+			}
+		}
+		return false
+	},
+	harvestRes: function(cr) {
+		if (cr.carry.energy<cr.carryCapacity) {
+			var har=cr.harvest(Game.getObjectById(cr.memory.resId))
+			if (har==ERR_NOT_IN_RANGE) {
+				if (cr.memory.cx==cr.pos.x && cr.memory.cy==cr.pos.y) {
+						cr.memory.stuck++;
+						console.log(cr.name + "is stuck num "+cr.memory.stuck)
+						if (cr.memory.stuck>2) {
+							cr.memory.action='idl'
+							cr.memory.stuck=0
+						}
+				}
+				else {
+					cr.memory.stuck=0
+				}
+				if (cr.memory.action!='idl') {
+					//console.log(cr.memory.cx+"-"+cr.memory.cy+" -> "+cr.pos.x+"-"+cr.pos.x)
+					cr.memory.cx=cr.pos.x
+					cr.memory.cy=cr.pos.y
+					var res=cr.moveByPath(cr.memory.pathToRes)
+				}
 
-		if (fpath.incomplete==false) {
-			var spath=this.serializePath(fpath.path)
-			//console.log(JSON.stringify(spath))
-			cr.memory.pathToRes=spath
-			return true
+			}
+			else if (har==ERR_INVALID_TARGET) {
+				cr.memory.action='idl'
+			}
+			else if (har==0) {
+
+			}
+			else {
+				console.log("har:"+har)
+			}
 		}
 		else {
-			return false
+			cr.memory.action='fs'
 		}
 	},
-	moveToRes: function(cr) {
-		console.log(JSON.stringify(cr.memory.pathToRes))
-		console.log(JSON.stringify(Room.deserializePath(cr.memory.pathToRes)))
-		//var res=cr.moveByPath(cr.memory.pathToRes)
-		console.log("moving")
-		console.log(JSON.stringify(cr.memory.pathToRes))
-		console.log(res)
-		/*if (res==-5){
-			cr.memory.action='idl';
-		}*/
+	findSpawn: function(cr) {
+		console.log(cr.name+ " is looking for a spawn")
+		cr.memory.action='idl'
+		var res=cr.pos.findClosestByPath(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
+                            structure.energy < structure.energyCapacity;
+                    }
+            });
+		if (res) {
+			var path=cr.pos.findPathTo(res)
+			if (path) {
+					cr.memory.pathToRes=Room.serializePath(path)
+					cr.memory.resId=res.id
+					console.log(cr.name+ " found spawn "+res.id)
+					cr.memory.action='cb'
+					return true
+			}
+		}
+		return false
 	},
-	serializePath(pt) {
-		var st="";
+	comeBack: function(cr) {
+		if (cr.carry.energy>0) {
+			var trs=cr.transfer(Game.getObjectById(cr.memory.resId), RESOURCE_ENERGY)
+			if (trs==ERR_NOT_IN_RANGE) {
 
-		for (var kp in pt) {
-			console.log(JSON.stringify(pt[kp]))
-			console.log(JSON.stringify(pt[kp].x))
-			console.log(JSON.stringify(pt[kp].y))
-			st+=String(pt[kp].x)+String(pt[kp].y)
+
+				var res=cr.moveByPath(cr.memory.pathToRes)
+
+
+
+			}
+			else if (trs==ERR_INVALID_TARGET) {
+				cr.memory.action='idl'
+			}
+			else if (trs==0) {
+
+			}
+			else {
+				console.log("trs:"+trs)
+			}
 		}
-		console.log(JSON.stringify(st))
-		return st
+		else {
+			cr.memory.action='idl'
+		}
 	}
 }
 

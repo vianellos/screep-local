@@ -1,4 +1,4 @@
-var roles={'harvester':{'max':3, 'body':[WORK,CARRY,MOVE], "cost":200} };
+var roles={'harvester':{'max':30, 'body':[WORK,CARRY,MOVE], "cost":200} };
 
 var toolspawner = {
 	run: function() {
@@ -12,7 +12,7 @@ var toolspawner = {
 	spawnNew: function(kr) {
 		for (var ks in Game.spawns) {
 			if (Game.spawns[ks].energy>roles[kr].cost) {
-				var newCreep = Game.spawns[ks].createCreep(roles[kr].body, undefined, {role: kr, action:'sp'});
+				var newCreep = Game.spawns[ks].createCreep(roles[kr].body, undefined, {role: kr, action:'sp', stuck:0, cx:0, cy:0});
 				console.log("Spawning new "+kr+" ["+newCreep+"]");
 			}
 			else {
