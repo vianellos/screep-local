@@ -5,6 +5,7 @@ var topbuilder= require ('tool.builder');
 var harverster= require ('role.harvester');
 var upgrader= require ('role.upgrader');
 var builder = require ('role.builder');
+var repairer = require ('role.repairer');
 
 //loader.run();
 
@@ -20,6 +21,7 @@ module.exports.loop = function () {
 
 	harverster.run();
 	upgrader.run();
+	repairer.run();
 
 
 
