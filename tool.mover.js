@@ -1,6 +1,4 @@
 var toolmover = {
-	run: function (cr) {
-	},
 	setPathTo: function (cr, res) {
 		var path=cr.pos.findPathTo(res)
 		if (path) {
@@ -41,11 +39,7 @@ var toolmover = {
 			}
 
 		}
-		else if (act==ERR_INVALID_TARGET) {
-			cr.memory.action='idl'
-			ret=-2
-		}
-		else if (act==ERR_FULL) {
+		else if (act==ERR_INVALID_TARGET || act==ERR_FULL) {
 		    cr.memory.action='idl'
 		    ret=-3
 		}
