@@ -1,8 +1,9 @@
 global.roomRoleSpawner=[]
 global.roomRoleSpawner['W5N8']=[]
-global.roomRoleSpawner['W5N8'][1]={'harvester':{'max':4, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300},'upgrader':{'max':3, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300}, 'builder':{'max':3, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300} };
-global.roomRoleSpawner['W5N8'][2]={'harvester':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400},'upgrader':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400}, 'builder':{'max':5, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400} };
-global.roomRoleSpawner['W5N8'][3]={'harvester':{'max':2, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550},'upgrader':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550}, 'builder':{'max':7, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550} };
+global.roomRoleSpawner['W5N8'][1]={'harvester':{'max':2, 'body':[WORK,CARRY,CARRY,MOVE], "cost":250},'upgrader':{'max':2, 'body':[WORK,CARRY,CARRY,MOVE], "cost":250}, 'builder':{'max':2, 'body':[WORK,CARRY,CARRY,MOVE], "cost":250} };
+global.roomRoleSpawner['W5N8'][2]={'harvester':{'max':4, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300},'upgrader':{'max':3, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300}, 'builder':{'max':3, 'body':[WORK,CARRY,CARRY,MOVE,MOVE], "cost":300} };
+global.roomRoleSpawner['W5N8'][3]={'harvester':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400},'upgrader':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400}, 'builder':{'max':5, 'body':[WORK,WORK,CARRY,CARRY,MOVE,MOVE], "cost":400} };
+global.roomRoleSpawner['W5N8'][4]={'harvester':{'max':2, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550},'upgrader':{'max':3, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550}, 'builder':{'max':7, 'body':[WORK,WORK,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], "cost":550} };
 
 
 var toolspawner = {
@@ -23,9 +24,8 @@ var toolspawner = {
 	    var spa=Game.rooms[kr].find(FIND_MY_SPAWNS)
 	    //console.log ('spnew:'+JSON.stringify(spa))
 	    for (var ks in spa) {
-	        //console.log ('sp:'+JSON.stringify(spa[ks]))
 			if (spa[ks].room.energyAvailable>=spi.cost) {
-				var newCreep =spa[ks].createCreep(spi.body, undefined, {role: ro, action:'idl', stuck:0, cx:0, cy:0, level:this.getSLevel(kr)});
+				var newCreep =spa[ks].createCreep(spi.body, undefined, {role: ro, action:'idl', stuck:0, cx:0, cy:0, fati:0, level:this.getSLevel(kr)});
 				console.log("Spawning new "+ro+" ("+spi.body+") named "+newCreep+"")
 				break
 			}
@@ -36,11 +36,14 @@ var toolspawner = {
 	},
 	getSLevel: function (kr) {
 	    var level=1
-	    if (Game.rooms[kr].energyCapacityAvailable>=400) {
-	        level=2
+		if (Game.rooms[kr].energyCapacityAvailable>300) {
+			level=2
+		}
+		if (Game.rooms[kr].energyCapacityAvailable>=400) {
+	        level=3
 	    }
 		if (Game.rooms[kr].energyCapacityAvailable>=550) {
-	        level=3
+	        level=4
 	    }
 	    return level
 	}

@@ -6,7 +6,7 @@ var toolmover = {
 		if (path) {
 			cr.memory.pathToRes=Room.serializePath(path)
 			cr.memory.resId=res.id
-			cr.say("U+1F603")
+			cr.say("😀")
 			return true
 		}
 		return false
@@ -20,12 +20,12 @@ var toolmover = {
 			var act=cr[action](Game.getObjectById(cr.memory.resId))
 		}
 		if (act==ERR_NOT_IN_RANGE) {
-			if (cr.memory.cx==cr.pos.x && cr.memory.cy==cr.pos.y) {
+			if (cr.memory.cx==cr.pos.x && cr.memory.cy==cr.pos.y && cr.memory.fati==cr.fatigue) {
 					cr.memory.stuck++;
 					if (cr.memory.stuck>1) {
 						cr.memory.action='idl'
 						cr.memory.stuck=0
-						cr.say("U+1F612")
+						cr.say("😕")
 						ret=-1
 					}
 			}
@@ -35,6 +35,7 @@ var toolmover = {
 			if (cr.memory.action!='idl') {
 				cr.memory.cx=cr.pos.x
 				cr.memory.cy=cr.pos.y
+				cr.memory.fati=cr.fatigue
 				cr.moveByPath(cr.memory.pathToRes)
 				ret=1
 			}
