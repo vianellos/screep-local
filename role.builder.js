@@ -1,19 +1,19 @@
-var roleharvester = {
+var rolebuilder = {
     run: function() {
-		var listh= _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
+		var listh= _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
 		for (var kh in listh) {
-			this.harvest(listh[kh])
+			this.build(listh[kh])
 		}
     },
-	harvest: function(cr) {
+	build: function(cr) {
 		switch(cr.memory.action) {
 			case 'idl':
 				if (cr.spawning!=true) {
-					if (cr.carry.energy<(cr.carryCapacity/2)) {
+					if (cr.carry.energy<cr.carryCapacity) {
 						this.findResource(cr)
 					}
 					else {
-						this.findSpawn(cr)
+						this.findBuildS(cr)
 					}
 				}
 			break;
@@ -21,10 +21,10 @@ var roleharvester = {
 				this.harvestRes(cr)
 			break;
 			case 'fs':
-				this.findSpawn(cr)
+				this.findBuildS(cr)
 			break;
 			case 'cb':
-				this.comeBack(cr)
+				this.buildSite(cr)
 			break;
 		}
 	},
@@ -47,14 +47,9 @@ var roleharvester = {
 			cr.memory.action='fs'
 		}
 	},
-	findSpawn: function(cr) {
+	findBuildS: function(cr) {
 		cr.memory.action='idl'
-		var res=cr.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION || structure.structureType == STRUCTURE_SPAWN) &&
-                            structure.energy < structure.energyCapacity;
-                    }
-            });
+		var res=cr.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 		if (res) {
 			if (mover.setPathTo(cr, res)) {
 				cr.memory.action='cb'
@@ -63,9 +58,9 @@ var roleharvester = {
 		}
 		return false
 	},
-	comeBack: function(cr) {
+	buildSite: function(cr) {
 		if (cr.carry.energy>0) {
-			mover.moveTo(cr, "transfer", RESOURCE_ENERGY)
+			mover.moveTo(cr, "build")
 		}
 		else {
 			cr.memory.action='idl'
@@ -73,4 +68,4 @@ var roleharvester = {
 	}
 }
 
-module.exports = roleharvester
+module.exports = rolebuilder
