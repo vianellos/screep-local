@@ -6,27 +6,13 @@ var toolmover = {
 		if (path) {
 			cr.memory.pathToRes=Room.serializePath(path)
 			cr.memory.resId=res.id
-			cr.say("Parto!")
+			cr.say("U+1F603")
 			return true
 		}
 		return false
 	},
 	moveTo(cr, action, option=false) {
 		var ret=0
-		var isroad=cr.pos.lookFor(LOOK_STRUCTURES)
-//		console.log(JSON.stringify(isroad))
-		if (isroad.length==0) {
-		    //console.log(JSON.stringify(isroad))
-		    var cposkey=String(cr.pos.x)+"-"+String(cr.pos.y);
-    		//console.log(JSON.stringify(isroad))
-    		if (!global.roadable[cr.room.name][cposkey]) {
-    		    global.roadable[cr.room.name][cposkey]=1
-    		}
-    		else {
-    		    global.roadable[cr.room.name][cposkey]++
-    		}
-		}
-
 		if (option) {
 			var act=cr[action](Game.getObjectById(cr.memory.resId), option)
 		}
@@ -39,7 +25,7 @@ var toolmover = {
 					if (cr.memory.stuck>1) {
 						cr.memory.action='idl'
 						cr.memory.stuck=0
-						cr.say("Bloccato :(")
+						cr.say("U+1F612")
 						ret=-1
 					}
 			}
